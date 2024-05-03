@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Miguel Aparca</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="img/icon.jpeg" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Google Fonts Roboto -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+    />
+    <!-- Google Maps JavaScript API -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+    <script type="module" src="./js/index.js"></script>
+
+    <!-- MDB -->
+    <link rel="stylesheet" href="css/mdb.min.css" />
+  </head>
+  <body>
+    <!-- Start your project here-->
+    <header class="fixed-top">
+      <!-- Navbar -->
+      <nav class="navbar navbar-light bg-light mx-0 my-0 px-0 py-0 w-100">
+        <!-- Container wrapper -->
+        <div class="w-100 mx-0 my-0 px-0 py-0">
+          <!-- Toggle button -->
+
+          <!-- Collapsible wrapper -->
+          <div
+            class="d-flex justify-content-center background-color"
+            id="navbarSupportedContent"
+          >
+            <!-- Navbar brand -->
+            <a class="navbar-brand mt-lg-0" href="#">
+              <img
+                src="img/icon.jpeg"
+                height="100"
+                alt="MDB Logo"
+                loading="lazy"
+              />
+            </a>
+          </div>
+          <!-- Collapsible wrapper -->
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+      <!-- Navbar -->
+    </header>
+    <div class="pt-5 mt-5"></div>
+
+    <div
+      class="px-0 mx-0 py-0 gx-0 my-0 gy-0 mt-2 d-flex justify-content-center"
+    >
+      <div
+        class="row col-12 px-0 mx-0 py-0 gx-0 my-0 gy-0"
+        style="height: 90vh"
+      >
+        <div class="col-12 col-md-9 px-0 mx-0 py-0 gx-0 my-0 gy-0">
+          <div class="h-100" id="map"></div>
+        </div>
+        <div class="col-12 col-md-3 px-0 mx-0 py-0 gx-0 my-0 gy-0">
+          <div class="text-center shadow-0 text-black">
+            <div
+              class="row justify-content-center rounded-3 p-3 px-0 mx-0 py-0 gx-0 my-0 gy-0 m-auto"
+              style="height: 90vh"
+            >
+              <div class="col-10 m-0 m-auto">
+                <p id="insert-text">
+                  Una vez seleccionado el lugar, se mostrará el porcentaje al
+                  pulsar el botón inferior.
+                </p>
+                <div
+                  class="place-autocomplete-card m-4"
+                  id="place-autocomplete-card"
+                ></div>
+                <button type="button" id="check_button">
+                  Comprobar porcentaje
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer class="text-center text-lg-left background-color text-white">
+      <!-- Grid container -->
+      <div class="container p-4 background-color">
+        <!--Grid row-->
+        <div class="row">
+          <!--Grid column-->
+          <div class="col-lg-12 col-md-12 mb-4 mb-md-0">
+            <h5 class="text-uppercase">Mappark</h5>
+            <p>Proyecto Reboots Atmira</p>
+          </div>
+
+          <!--Grid column-->
+        </div>
+        <!--Grid row-->
+      </div>
+      <!-- Grid container -->
+
+      <!-- Copyright -->
+      <div
+        class="text-center pb-3"
+        style="background-color: rgba(0, 0, 0, 0.05)"
+      >
+        © 2024
+      </div>
+      <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+    <script>
+      ((g) => {
+        var h,
+          a,
+          k,
+          p = "The Google Maps JavaScript API",
+          c = "google",
+          l = "importLibrary",
+          q = "__ib__",
+          m = document,
+          b = window;
+        b = b[c] || (b[c] = {});
+        var d = b.maps || (b.maps = {}),
+          r = new Set(),
+          e = new URLSearchParams(),
+          u = () =>
+            h ||
+            (h = new Promise(async (f, n) => {
+              await (a = m.createElement("script"));
+              e.set("libraries", [...r] + "");
+              for (k in g)
+                e.set(
+                  k.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
+                  g[k]
+                );
+              e.set("callback", c + ".maps." + q);
+              a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
+              d[q] = f;
+              a.onerror = () => (h = n(Error(p + " could not load.")));
+              a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+              m.head.append(a);
+            }));
+        d[l]
+          ? console.warn(p + " only loads once. Ignoring:", g)
+          : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+      })({ key: "AIzaSyAY8gw-iZc1uMnWyT7Dsq0mIaKzWy6S1mY", v: "alpha" });
+    </script>
+    <!-- End your project here-->
+
+    <!-- MDB -->
+    <script type="text/javascript" src="js/mdb.umd.min.js"></script>
+    <script type="text/javascript" src="js/mdb.es.min.js"></script>
+  </body>
+</html>

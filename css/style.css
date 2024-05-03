@@ -1,0 +1,37 @@
+
+
+
+#map {
+  padding: 0%;
+  margin: 0%;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.vAygCK-api-load-alpha-banner{
+  display: none;
+}
+
+.background-color{
+  background-color: #020018;
+}
+
+.custom-map-control-button{
+  background-color: #020018;
+  color: white;
+  border: 1px solid #020018;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  top: 10px !important;
+}
+
+button{
+  background-color: #020018;
+  color: white;
+  border: 1px solid #020018;
+  border-radius: 8px !important;
+  padding: 10px;
+  cursor: pointer;
+}
