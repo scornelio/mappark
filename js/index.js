@@ -243,7 +243,7 @@ checkButton.addEventListener("click", function () {
     redirect: "follow",
   };
 
-  const url = "http://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
+  const url = "https://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
   //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
 
   fetch(url, requestOptions)
