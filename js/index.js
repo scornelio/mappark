@@ -200,8 +200,6 @@ let checkButton = document.getElementById("check_button");
 let insertText = document.getElementById("insert-text");
 
 checkButton.addEventListener("click", function () {
-  console.log("Button clicked");
-
   insertText.innerHTML =
     "Fecha: " +
     fecha +
@@ -216,33 +214,26 @@ checkButton.addEventListener("click", function () {
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  myHeaders.append("Authorization", "Bearer qfSc0byLka3RB5a3LJUNNyhwGYuTErqs");
 
   const raw = JSON.stringify({
-    input_data: {
-      data: [
-        {
-          idProbabilidadEstacionamiento: 0,
-          latitud: lat,
-          longitud: lng,
-          pais: country,
-          ciudad: province,
-          provincia: province,
-          barrio: neighborhood,
-          nombreVia: streetName + " " + streetNumber,
-          codigoPostal: postalCode,
-          fechaCompleta: fecha,
-          año: year,
-          nombreDiaSemana: day,
-          nombreMes: month,
-          horaInicio: hora,
-          horaFin: hora,
-          temperatura: 19.1,
-          precipitacion: 0.3,
-          densidadTrafico: null,
-        },
-      ],
-    },
+    idProbabilidadEstacionamiento: 0,
+    latitud: lat,
+    longitud: lng,
+    pais: country,
+    ciudad: province,
+    provincia: province,
+    barrio: neighborhood,
+    nombreVia: streetName + " " + streetNumber,
+    codigoPostal: postalCode,
+    fechaCompleta: fecha,
+    año: year,
+    nombreDiaSemana: day,
+    nombreMes: month,
+    horaInicio: hora,
+    horaFin: hora,
+    temperatura: 19.1,
+    precipitacion: 0.3,
+    densidadTrafico: null,
   });
 
   const requestOptions = {
@@ -252,11 +243,13 @@ checkButton.addEventListener("click", function () {
     redirect: "follow",
   };
 
-  fetch(
-    "https://az-ml-atmira-reboots-conn-point.westeurope.inference.ml.azure.com/score",
-    requestOptions
-  )
+  const url = "http://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
+  //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
+
+  fetch(url, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.error(error));
+    .then((result) => {
+      insertText.innerHTML += "<br>Probabilidad: " + result;
+    })
+    .catch((error) => console.error("Error:", error));
 });
