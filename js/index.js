@@ -9,6 +9,7 @@ let formattedAddress;
 let streetNumber = "";
 let streetName = "";
 let neighborhood = "";
+let city = "";
 let province = "";
 let country = "";
 let postalCode = "";
@@ -23,8 +24,8 @@ async function initMap() {
 
   // Initialize the map.
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 40.4380986, lng: -3.8443472 },
-    zoom: 15,
+    center: { lat: 40.4779299, lng: -3.7193656 },
+    zoom: 16,
     mapId: "4504f8b37365c3d0",
     mapTypeControl: false,
   });
@@ -58,23 +59,8 @@ async function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-
-          new google.maps.Marker({
-            position: pos,
-            map,
-            zoom: 8,
-            title: "Location found.",
-          });
-          lat = position.coords.latitude;
-          lng = position.coords.longitude;
-          console.log(
-            position.coords +
-              " " +
-              position.coords.latitude +
-              " " +
-              position.coords.longitude
-          );
           map.setCenter(pos);
+          map.setZoom(17);
         },
         () => {
           handleLocationError(true, infoWindow, map.getCenter());
@@ -140,16 +126,14 @@ async function initMap() {
       if (component.types.includes("postal_code")) {
         postalCode = component.longText;
       }
+      if (component.types.includes("locality")) {
+        city = component.longText;
+      }
     });
 
     let content = `<div id="infowindow-content">
         <span id="place-displayname" class="title">${place.displayName}</span><br />
         <span id="place-address">${place.formattedAddress}</span>
-        <div>Street Number: ${streetNumber}</div>
-        <div>Street Name: ${streetName}</div>
-        <div>Neighborhood: ${neighborhood}</div>
-        <div>Province: ${province}</div>
-        <div>Country: ${country}</div>
     </div>`;
     lat = place.location.lat();
     lng = place.location.lng();
@@ -198,21 +182,11 @@ console.log(day + " " + month + " " + year);
 console.log(fecha + " " + hora);
 
 let checkButton = document.getElementById("check_button");
-let insertText = document.getElementById("insert-text");
+let insertText = document.getElementById("result");
+
+insertText.style.overflowY = "hidden";
 
 checkButton.addEventListener("click", function () {
-  insertText.innerHTML =
-    "Fecha: " +
-    fecha +
-    " Hora: " +
-    hora +
-    " Latitud: " +
-    lat +
-    " Longitud: " +
-    lng +
-    " Dirección: " +
-    formattedAddress;
-
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -247,10 +221,21 @@ checkButton.addEventListener("click", function () {
   const url = "https://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
   //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
 
+  insertText.style.overflowY = "scroll";
+
+
   fetch(url, requestOptions)
     .then((response) => response.text())
     .then((result) => {
-      insertText.innerHTML += "<br>Probabilidad: " + result;
+      let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
+      insertText.innerHTML +=`<div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Probabilidad <b class="text-${color}">${result}</b></h5>
+                    <p class="card-text">${streetName+", "+streetNumber+ ", "+postalCode+", "+ city}</p>
+                  </div>
+                </div></br>`;
     })
     .catch((error) => console.error("Error:", error));
 });
+
+

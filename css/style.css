@@ -35,3 +35,9 @@ button{
   padding: 10px;
   cursor: pointer;
 }
+
+#result{
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 14em;
+}
