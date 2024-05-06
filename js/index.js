@@ -193,6 +193,7 @@ const month = hoy.toLocaleString("default", { month: "long" });
 const day = hoy.toLocaleString("default", { weekday: "long" });
 // Get Year today
 const year = hoy.getFullYear();
+console.log(day + " " + month + " " + year);
 
 console.log(fecha + " " + hora);
 
