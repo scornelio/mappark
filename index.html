@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Miguel Aparca</title>
+    <title>MapparK</title>
     <!-- MDB icon -->
     <link rel="icon" href="img/icon.jpeg" type="image/x-icon" />
     <!-- Font Awesome -->
@@ -30,7 +30,7 @@
   </head>
   <body>
     <!-- Start your project here-->
-    <header class="fixed-top">
+    <header>
       <!-- Navbar -->
       <nav class="navbar navbar-light bg-light mx-0 my-0 px-0 py-0 w-100">
         <!-- Container wrapper -->
@@ -46,7 +46,7 @@
             <a class="navbar-brand mt-lg-0" href="#">
               <img
                 src="img/icon.jpeg"
-                height="100"
+                height="81"
                 alt="MDB Logo"
                 loading="lazy"
               />
@@ -58,27 +58,20 @@
       </nav>
       <!-- Navbar -->
     </header>
-    <div class="pt-5 mt-5"></div>
-
-    <div
-      class="px-0 mx-0 py-0 gx-0 my-0 gy-0 mt-2 d-flex justify-content-center"
-    >
-      <div
-        class="row col-12 px-0 mx-0 py-0 gx-0 my-0 gy-0"
-        style="height: 90vh"
-      >
-        <div class="col-12 col-md-9 px-0 mx-0 py-0 gx-0 my-0 gy-0">
-          <div class="h-100" id="map"></div>
+    <div class="px-0 mx-0 py-0 gx-0 my-0 gy-0 d-flex justify-content-center">
+      <div class="row col-12 px-0 mx-0 py-0 gx- gy-0 my-4">
+        <div class="col-12 col-md-9 mx-0 py-0 gx-0 my-0 gy-0 p-4">
+          <div id="map" style="height: 65vh"></div>
         </div>
         <div class="col-12 col-md-3 px-0 mx-0 py-0 gx-0 my-0 gy-0">
           <div class="text-center shadow-0 text-black">
             <div
               class="row justify-content-center rounded-3 p-3 px-0 mx-0 py-0 gx-0 my-0 gy-0 m-auto"
-              style="height: 90vh"
+              style="height: 65vh"
             >
-              <div class="col-10 m-0 m-auto">
-                <p id="insert-text">
-                  Una vez seleccionado el lugar, se mostrará el porcentaje al
+              <div class="col-10 mt-4">
+                <p>
+                  Una vez seleccionado el lugar, se mostrará la probabilidad al
                   pulsar el botón inferior.
                 </p>
                 <div
@@ -86,8 +79,11 @@
                   id="place-autocomplete-card"
                 ></div>
                 <button type="button" id="check_button">
-                  Comprobar porcentaje
+                  Comprobar probabilidad
                 </button>
+                <br />
+                <br />
+                <div id="result"></div>
               </div>
             </div>
           </div>
@@ -97,13 +93,13 @@
     <!-- Footer -->
     <footer class="text-center text-lg-left background-color text-white">
       <!-- Grid container -->
-      <div class="container p-4 background-color">
+      <div class="container pt-3 background-color">
         <!--Grid row-->
         <div class="row">
           <!--Grid column-->
-          <div class="col-lg-12 col-md-12 mb-4 mb-md-0">
-            <h5 class="text-uppercase">Mappark</h5>
-            <p>Proyecto Reboots Atmira</p>
+          <div class="col-lg-12 col-md-12">
+            <h5 class="text-uppercase"><b>Mappark</b></h5>
+            <span>Proyecto Reboots Atmira</span>
           </div>
 
           <!--Grid column-->
@@ -114,7 +110,7 @@
 
       <!-- Copyright -->
       <div
-        class="text-center pb-3"
+        class="text-center pb-2"
         style="background-color: rgba(0, 0, 0, 0.05)"
       >
         © 2024
