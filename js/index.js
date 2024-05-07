@@ -184,7 +184,6 @@ console.log(fecha + " " + hora);
 let checkButton = document.getElementById("check_button");
 let insertText = document.getElementById("result");
 
-insertText.style.overflowY = "hidden";
 
 checkButton.addEventListener("click", function () {
   const myHeaders = new Headers();
@@ -221,14 +220,13 @@ checkButton.addEventListener("click", function () {
   const url = "https://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
   //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
 
-  insertText.style.overflowY = "scroll";
 
 
   fetch(url, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
-      insertText.innerHTML += `<div class="card">
+      insertText.innerHTML = `<div class="card">
                   <div class="card-body">
                     <h5 class="card-title">Probabilidad <b class="text-${color}">${result}</b></h5>
                     <p class="card-text">${streetName + ", " + streetNumber + ", " + postalCode + ", " + city}</p>
