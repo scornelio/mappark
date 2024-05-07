@@ -228,7 +228,8 @@ checkButton.addEventListener("click", function () {
       let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
       insertText.innerHTML = `<div class="card">
                   <div class="card-body">
-                    <h5 class="card-title">Probabilidad <b class="text-${color}">${result}</b></h5>
+                    <h5 class="card-title p-2">Probabilidad <b class="text-${color}">${result}</b></h5>
+                    <hr>
                     <p class="card-text">${streetName + ", " + streetNumber + ", " + postalCode + ", " + city}</p>
                   </div>
                 </div></br>`;
