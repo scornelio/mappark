@@ -188,6 +188,27 @@ let insertText = document.getElementById("result");
 checkButton.addEventListener("click", function () {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  let temp = 0;
+  let prec = 0;
+
+  
+
+  const requestOptionsWeather = {
+    method: "GET",
+    redirect: "follow"
+  };
+
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lon=${lng}&appid=c21d7ba2d8ef43693ff881476b0877ab&lat=${lat}&units=metric`, requestOptionsWeather)
+    .then((response) => response.text())
+    .then((result) => {
+      result = JSON.parse(result);
+      console.log(result);
+      temp = result.main.temp;
+      console.log(temp);
+      prec = result.rain ? result.rain["1h"] : 0;
+      console.log(prec);
+    })
+    .catch((error) => console.error(error));
 
   const raw = JSON.stringify({
     idProbabilidadEstacionamiento: 0,
@@ -205,8 +226,8 @@ checkButton.addEventListener("click", function () {
     nombreMes: month,
     horaInicio: hora,
     horaFin: hora,
-    temperatura: 19.1,
-    precipitacion: 0.3,
+    temperatura: temp,
+    precipitacion: prec,
     densidadTrafico: null,
   });
 
@@ -216,6 +237,9 @@ checkButton.addEventListener("click", function () {
     body: raw,
     redirect: "follow",
   };
+
+
+  
 
   const url = "https://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
   //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
