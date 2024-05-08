@@ -147,6 +147,7 @@ async function initMap() {
     console.log(`Neighborhood: ${neighborhood}`);
     console.log(`Province: ${province}`);
     console.log(`Country: ${country}`);
+    console.log(`City: ${city}`);
     console.log(`Postal Code: ${postalCode}`);
 
     updateInfoWindow(content, place.location);
@@ -215,7 +216,7 @@ checkButton.addEventListener("click", function () {
     latitud: lat,
     longitud: lng,
     pais: country,
-    ciudad: province,
+    ciudad: city,
     provincia: province,
     barrio: neighborhood,
     nombreVia: streetName + " " + streetNumber,
