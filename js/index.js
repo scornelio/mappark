@@ -223,6 +223,7 @@ checkButton.addEventListener("click", function () {
     codigoPostal: postalCode,
     fecha: fecha,
     ano: year,
+    dia: 0,
     nombreDiaSemana: day,
     nombreMes: month,
     HoraInicio: hora,
