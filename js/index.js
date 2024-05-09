@@ -191,24 +191,24 @@ checkButton.addEventListener("click", function () {
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
-    idProbabilidadEstacionamiento: 0,
-    latitud: lat,
-    longitud: lng,
+    // idProbabilidadEstacionamiento: 0,
+    // latitud: lat,
+    // longitud: lng,
     pais: country,
     ciudad: province,
     provincia: province,
     barrio: neighborhood,
-    nombreVia: streetName + " " + streetNumber,
+    nombrevia: streetName + " " + streetNumber,
     codigoPostal: postalCode,
-    fechaCompleta: fecha,
-    año: year,
+    fecha: fecha,
+    ano: year,
     nombreDiaSemana: day,
     nombreMes: month,
-    horaInicio: hora,
-    horaFin: hora,
-    temperatura: 19.1,
-    precipitacion: 0.3,
-    densidadTrafico: null,
+    HoraInicio: hora,
+    HoraFin: hora,
+    // temperatura: 19.1,
+    // precipitacion: 0.3,
+    Densidad: null,
   });
 
   const requestOptions = {
