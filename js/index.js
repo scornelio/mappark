@@ -212,24 +212,24 @@ checkButton.addEventListener("click", function () {
     .catch((error) => console.error(error));
 
   const raw = JSON.stringify({
-    idProbabilidadEstacionamiento: 0,
-    latitud: lat,
-    longitud: lng,
+    // idProbabilidadEstacionamiento: 0,
+    // latitud: lat,
+    // longitud: lng,
     pais: country,
     ciudad: city,
     provincia: province,
     barrio: neighborhood,
-    nombreVia: streetName + " " + streetNumber,
+    nombrevia: streetName + " " + streetNumber,
     codigoPostal: postalCode,
-    fechaCompleta: fecha,
-    año: year,
+    fecha: fecha,
+    ano: year,
     nombreDiaSemana: day,
     nombreMes: month,
-    horaInicio: hora,
-    horaFin: hora,
-    temperatura: temp,
-    precipitacion: prec,
-    densidadTrafico: null,
+    HoraInicio: hora,
+    HoraFin: hora,
+    // temperatura: temp,
+    // precipitacion: prec,
+    Densidad: null,
   });
 
   const requestOptions = {
