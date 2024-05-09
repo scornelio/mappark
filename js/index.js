@@ -211,6 +211,8 @@ checkButton.addEventListener("click", function () {
     })
     .catch((error) => console.error(error));
 
+    console.log("Codigo postal: "+postalCode);
+
   const raw = JSON.stringify({
     // idProbabilidadEstacionamiento: 0,
     // latitud: lat,
@@ -230,7 +232,7 @@ checkButton.addEventListener("click", function () {
     HoraFin: hora,
     // temperatura: temp,
     // precipitacion: prec,
-    Densidad: null,
+    Densidad: 0,
   });
 
   const requestOptions = {
