@@ -61,6 +61,77 @@ async function initMap() {
           };
           map.setCenter(pos);
           map.setZoom(17);
+          
+          if (marker) {
+            marker.setMap(null); // Elimina el marcador anterior
+          }
+          marker = new google.maps.Marker({ // Crea un nuevo marcador
+            position: pos,
+            map: map,
+          });
+          if (infoWindow) {
+            infoWindow.close(); // Cierra el cuadro de información anterior
+          }
+
+          // Restablece las variables de la dirección
+          streetNumber = "";
+          streetName = "";
+          neighborhood = "";
+          city = "";
+          province = "";
+          country = "";
+          postalCode = "";
+          
+          // Actualiza las variables lat y lng
+          lat = pos.lat;
+          lng = pos.lng;
+
+           // Aquí es donde necesitarías hacer la solicitud a la API de Geocoding
+          fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`)
+          .then(response => response.json())
+          .then(data => {
+          // Aquí es donde actualizarías las variables de dirección
+          // con la dirección obtenida de la API de Geocoding
+          let addressComponents = data.results[0].address_components;
+          addressComponents.forEach((component) => {
+            if (component.types.includes("street_number")) {
+              streetNumber = component.long_name;
+            }
+            if (component.types.includes("route")) {
+              streetName = component.long_name;
+            }
+            if (
+              component.types.includes("sublocality") ||
+              component.types.includes("neighborhood")
+            ) {
+              neighborhood = component.long_name;
+            }
+            if (component.types.includes("administrative_area_level_1")) {
+              province = component.long_name;
+            }
+            if (component.types.includes("country")) {
+              country = component.long_name;
+            }
+            if (component.types.includes("postal_code")) {
+              postalCode = component.long_name;
+            }
+            if (component.types.includes("locality")) {
+              city = component.long_name;
+            }
+          });
+          formattedAddress = data.results[0].formatted_address;
+
+          // Aquí es donde actualizarías el contenido de la ventana de información
+          let content = `<div id="infowindow-content">
+            <span id="place-displayname" class="title">${formattedAddress}</span><br />
+            <span id="place-address">${formattedAddress}</span>
+          </div>`;
+          infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
+            content: content,
+          });
+          infoWindow.open(map, marker);
+        })
+        .catch(error => console.error(error));
         },
         () => {
           handleLocationError(true, infoWindow, map.getCenter());
@@ -71,6 +142,11 @@ async function initMap() {
       handleLocationError(false, infoWindow, map.getCenter());
     }
   });
+
+   // Llama al evento click del botón de ubicación actual
+   locationButton.click();
+
+
   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(
@@ -80,6 +156,83 @@ async function initMap() {
     );
     infoWindow.open(map);
   }
+
+  // Agrega un listener para el evento 'click' en el mapa
+map.addListener('click', function(event) {
+  placeMarker(event.latLng);
+});
+
+// Función para colocar un marcador en la ubicación especificada
+function placeMarker(location) {
+  if (marker) {
+    marker.setMap(null); // Elimina el marcador anterior
+  }
+  marker = new google.maps.Marker({ // Crea un nuevo marcador
+    position: location,
+    map: map,
+  });
+
+  // Actualiza las variables lat y lng
+  lat = location.lat();
+  lng = location.lng();
+
+   // Restablece las variables de la dirección
+   streetNumber = "";
+   streetName = "";
+   neighborhood = "";
+   city = "";
+   province = "";
+   country = "";
+   postalCode = "";
+
+  // Aquí es donde necesitarías hacer la solicitud a la API de Geocoding
+  fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`)
+  .then(response => response.json())
+  .then(data => {
+    // Aquí es donde actualizarías las variables de dirección
+    // con la dirección obtenida de la API de Geocoding
+    let addressComponents = data.results[0].address_components;
+    addressComponents.forEach((component) => {
+      if (component.types.includes("street_number")) {
+        streetNumber = component.long_name;
+      }
+      if (component.types.includes("route")) {
+        streetName = component.long_name;
+      }
+      if (
+        component.types.includes("sublocality") ||
+        component.types.includes("neighborhood")
+      ) {
+        neighborhood = component.long_name;
+      }
+      if (component.types.includes("administrative_area_level_1")) {
+        province = component.long_name;
+      }
+      if (component.types.includes("country")) {
+        country = component.long_name;
+      }
+      if (component.types.includes("postal_code")) {
+        postalCode = component.long_name;
+      }
+      if (component.types.includes("locality")) {
+        city = component.long_name;
+      }
+    });
+    formattedAddress = data.results[0].formatted_address;
+
+    // Aquí es donde actualizarías el contenido de la ventana de información
+    let content = `<div id="infowindow-content">
+      <span id="place-displayname" class="title">${formattedAddress}</span><br />
+      <span id="place-address">${formattedAddress}</span>
+    </div>`;
+    infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
+      content: content,
+    });
+    infoWindow.open(map, marker);
+  })
+  .catch(error => console.error(error));
+}
+
 
   // Add the gmp-placeselect listener, and display the results on the map.
   //@ts-ignore
@@ -93,12 +246,18 @@ async function initMap() {
       ],
     });
     // If the place has a geometry, then present it on a map.
+
+    placeMarker(place.location);
+
     if (place.viewport) {
       map.fitBounds(place.viewport);
     } else {
       map.setCenter(place.location);
       map.setZoom(17);
     }
+
+    lat = place.location.lat();
+    lng = place.location.lng();
 
     let addressComponents = place.addressComponents;
 
@@ -187,6 +346,12 @@ let insertText = document.getElementById("result");
 
 
 checkButton.addEventListener("click", function () {
+
+  insertText.innerHTML = '';
+
+  // Mostrar el spinner
+  document.getElementById('spinner').style.display = 'block';
+
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   let temp = 0;
@@ -251,18 +416,49 @@ checkButton.addEventListener("click", function () {
 
 
   fetch(url, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
-      insertText.innerHTML = `<div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title p-2">Probabilidad <b class="text-${color}">${result}</b></h5>
-                    <hr>
-                    <p class="card-text">${streetName + ", " + streetNumber + ", " + postalCode + ", " + city}</p>
-                  </div>
-                </div></br>`;
+    .then((response) => {
+      return response.text()
     })
-    .catch((error) => console.error("Error:", error));
+    .then((result) => {
+
+      // Ocultar el spinner
+      document.getElementById('spinner').style.display = 'none';
+
+      if (result == 'Alta'|| result =='Media' || result =='Baja') {
+
+        let address = '';
+        if (streetName) {
+            address += streetName;
+        }
+        if (streetNumber) {
+            address += (address ? ', ' : '') + streetNumber;
+        }
+        if (postalCode) {
+            address += (address ? ', ' : '') + postalCode;
+        }
+        if (city) {
+            address += (address ? ', ' : '') + city;
+        }
+
+        let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
+        insertText.innerHTML = `<div class="card">
+        <div class="card-body">
+        <h5 class="card-title p-2">Probabilidad <b class="text-${color}">${result}</b></h5>
+        <hr>
+        <p class="card-text">${address}</p>
+        </div>
+        </div></br>`;
+      } else {
+        insertText.innerHTML = `<div class="card">
+        <div class="card-body">
+        <h5 class="card-title p-2">Error: verifique la dirección seleccionada y vuelva a intentarlo.</b></h5>
+        </div>
+        </div></br>`;
+      }
+    })
+    .catch((error) => {
+      // ocultar el spinner incluso si hay un error
+      document.getElementById('spinner').style.display = 'none';
+      console.error("Error:", error);
+    });
 });
-
-
