@@ -13,6 +13,8 @@ let city = "";
 let province = "";
 let country = "";
 let postalCode = "";
+let geolocationError = false;
+
 
 async function initMap() {
   // Request needed libraries.
@@ -119,6 +121,7 @@ async function initMap() {
   }
 
   async function updateMarkerAndInfoWindow(marker, pos) {
+    geolocationError=false
     marker = createMarker(marker, pos);
     const formattedAddress = await fetchAddress(pos);
     handleInfoWindow(formattedAddress, marker);
@@ -155,18 +158,28 @@ async function initMap() {
   });
 
 
-   // Llama al evento click del botón de ubicación actual
-   locationButton.click();
+  if (navigator.permissions) {
+    // Comprueba el estado del permiso de geolocalización
+    navigator.permissions.query({name:'geolocation'}).then(function(result) {
+      if (result.state == 'granted') {
+        // El permiso de geolocalización está activado, llama a locationButton.click()
+        locationButton.click();
+        return
+      }
+    })
+  }
+
 
 
   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(
       browserHasGeolocation
-        ? "Error: The Geolocation service failed."
-        : "Error: Your browser doesn't support geolocation."
+        ? "Error: Servicio de geolocalización fallido. Por favor, asegúrese de aprobar los permisos del navegador para acceder a su ubicación."
+        : "Error: Su navegador no soporta la geolocalización."
     );
     infoWindow.open(map);
+    geolocationError = true;
   }
 
   // Agrega un listener para el evento 'click' en el mapa
@@ -257,6 +270,15 @@ let insertText = document.getElementById("result");
 
 
 checkButton.addEventListener("click", function () {
+
+  if (geolocationError) {
+    insertText.innerHTML = `<div class="card">
+      <div class="card-body">
+      <h5 class="card-title p-2">Error: verifique la dirección seleccionada y vuelva a intentarlo.</b></h5>
+      </div>
+      </div></br>`;
+    return;
+  }
 
   insertText.innerHTML = '';
 
