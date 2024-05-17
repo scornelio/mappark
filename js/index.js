@@ -134,6 +134,7 @@ async function initMap() {
   locationButton.classList.add("custom-map-control-button");
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
   locationButton.addEventListener("click", async () => {
+
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -184,13 +185,10 @@ async function initMap() {
 
   // Agrega un listener para el evento 'click' en el mapa
   map.addListener('click', async function(event) {
-
-    
     const pos = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
     };
-    
     marker = await updateMarkerAndInfoWindow(marker, pos);
   });
 
@@ -272,6 +270,7 @@ let insertText = document.getElementById("result");
 checkButton.addEventListener("click", function () {
 
   if (geolocationError) {
+    document.getElementById('spinner').style.display = 'none';
     insertText.innerHTML = `<div class="card">
       <div class="card-body">
       <h5 class="card-title p-2">Error: verifique la dirección seleccionada y vuelva a intentarlo.</b></h5>
