@@ -134,7 +134,7 @@ async function initMap() {
   locationButton.classList.add("custom-map-control-button");
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
   locationButton.addEventListener("click", async () => {
-
+    document.getElementById('spinner').style.display = 'none';
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -185,6 +185,7 @@ async function initMap() {
 
   // Agrega un listener para el evento 'click' en el mapa
   map.addListener('click', async function(event) {
+    document.getElementById('spinner').style.display = 'none';
     const pos = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
@@ -195,6 +196,7 @@ async function initMap() {
   // Add the gmp-placeselect listener, and display the results on the map.
   //@ts-ignore
   placeAutocomplete.addEventListener("gmp-placeselect", async ({ place }) => {
+    document.getElementById('spinner').style.display = 'none';
     await place.fetchFields({
       fields: [
         "displayName",
@@ -204,7 +206,6 @@ async function initMap() {
       ],
     });
 
-    
     const pos = {
       lat: place.location.lat(),
       lng: place.location.lng()
@@ -219,8 +220,6 @@ async function initMap() {
       map.setZoom(17);
     }
 
-    
-
     console.log(`Formatted Address: ${place.formattedAddress}`);
     console.log(`Latitude: ${lat}`);
     console.log(`Longitude: ${lng}`);
@@ -231,8 +230,6 @@ async function initMap() {
     console.log(`Country: ${country}`);
     console.log(`City: ${city}`);
     console.log(`Postal Code: ${postalCode}`);
-
-  
   });
 }
 
