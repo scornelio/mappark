@@ -62,6 +62,16 @@ async function initMap() {
     try {
       let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.lat},${position.lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`);
       let data = await response.json();
+
+      // Restablece las variables de la dirección
+      streetNumber = "";
+      streetName = "";
+      neighborhood = "";
+      city = "";
+      province = "";
+      country = "";
+      postalCode = "";
+
       let addressComponents = data.results[0].address_components;
       addressComponents.forEach((component) => {
         if (component.types.includes("street_number")) {
@@ -96,7 +106,7 @@ async function initMap() {
   };
   
 
-  function handleInfoWindow(formattedAddress){
+  function handleInfoWindow(formattedAddress, marker){
     if (infoWindow) {
       infoWindow.close(); // Cierra el cuadro de información anterior
     }
@@ -106,6 +116,14 @@ async function initMap() {
       content: content,
     });
     infoWindow.open(map, marker);
+  }
+
+  async function updateMarkerAndInfoWindow(marker, pos) {
+    marker = createMarker(marker, pos);
+    const formattedAddress = await fetchAddress(pos);
+    handleInfoWindow(formattedAddress, marker);
+    
+    return marker
   }
 
   const locationButton = document.createElement("button");
@@ -124,19 +142,7 @@ async function initMap() {
           map.setCenter(pos);
           map.setZoom(17);
 
-          marker = createMarker(marker, pos)
-
-          // Restablece las variables de la dirección
-          streetNumber = "";
-          streetName = "";
-          neighborhood = "";
-          city = "";
-          province = "";
-          country = "";
-          postalCode = "";
-
-          const formattedAddress = await fetchAddress(pos);
-          handleInfoWindow(formattedAddress)
+          marker = await updateMarkerAndInfoWindow(marker, pos);
         },
         () => {
           handleLocationError(true, infoWindow, map.getCenter());
@@ -166,24 +172,13 @@ async function initMap() {
   // Agrega un listener para el evento 'click' en el mapa
   map.addListener('click', async function(event) {
 
-    marker = createMarker(marker, event.latLng)
-
+    
     const pos = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
     };
-
-    // Restablece las variables de la dirección
-    streetNumber = "";
-    streetName = "";
-    neighborhood = "";
-    city = "";
-    province = "";
-    country = "";
-    postalCode = "";
-
-    formattedAddress = await fetchAddress(pos);
-    handleInfoWindow(formattedAddress);
+    
+    marker = await updateMarkerAndInfoWindow(marker, pos);
   });
 
   // Add the gmp-placeselect listener, and display the results on the map.
@@ -198,24 +193,13 @@ async function initMap() {
       ],
     });
 
-    marker = createMarker(marker, place.location)
-
+    
     const pos = {
       lat: place.location.lat(),
       lng: place.location.lng()
     };
-
-    // Restablece las variables de la dirección
-    streetNumber = "";
-    streetName = "";
-    neighborhood = "";
-    city = "";
-    province = "";
-    country = "";
-    postalCode = "";
-
-    formattedAddress = await fetchAddress(pos);
-    handleInfoWindow(formattedAddress);
+    
+    marker = await updateMarkerAndInfoWindow(marker, pos);
 
     if (place.viewport) {
       map.fitBounds(place.viewport);
