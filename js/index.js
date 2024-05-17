@@ -46,32 +46,87 @@ async function initMap() {
   });
   infoWindow = new google.maps.InfoWindow({});
 
+  function createMarker(marker, position){
+    if (marker) {
+      marker.setMap(null); // Elimina el marcador anterior
+    }
+    marker = new google.maps.Marker({ // Crea un nuevo marcador
+      position: position,
+      map: map,
+    });
+    return marker;
+  }
+
+  async function fetchAddress(position) {
+    try {
+      let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.lat},${position.lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`);
+      let data = await response.json();
+      let addressComponents = data.results[0].address_components;
+      addressComponents.forEach((component) => {
+        if (component.types.includes("street_number")) {
+          streetNumber = component.long_name;
+        }
+        if (component.types.includes("route")) {
+          streetName = component.long_name;
+        }
+        if (
+          component.types.includes("sublocality") ||
+          component.types.includes("neighborhood")
+        ) {
+          neighborhood = component.long_name;
+        }
+        if (component.types.includes("administrative_area_level_1")) {
+          province = component.long_name;
+        }
+        if (component.types.includes("country")) {
+          country = component.long_name;
+        }
+        if (component.types.includes("postal_code")) {
+          postalCode = component.long_name;
+        }
+        if (component.types.includes("locality")) {
+          city = component.long_name;
+        }
+      });
+      return data.results[0].formatted_address;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
+  function handleInfoWindow(formattedAddress){
+    if (infoWindow) {
+      infoWindow.close(); // Cierra el cuadro de información anterior
+    }
+    // Aquí es donde actualizarías el contenido de la ventana de información
+    let content = `<div id="infowindow-content">
+    <span id="place-displayname" class="title">${formattedAddress}</span><br />
+    <span id="place-address">${formattedAddress}</span>
+    </div>`;
+    infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
+      content: content,
+    });
+    infoWindow.open(map, marker);
+  }
+
   const locationButton = document.createElement("button");
   locationButton.textContent = "Ubicación actual";
   locationButton.classList.add("custom-map-control-button");
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-  locationButton.addEventListener("click", () => {
+  locationButton.addEventListener("click", async () => {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
           map.setCenter(pos);
           map.setZoom(17);
-          
-          if (marker) {
-            marker.setMap(null); // Elimina el marcador anterior
-          }
-          marker = new google.maps.Marker({ // Crea un nuevo marcador
-            position: pos,
-            map: map,
-          });
-          if (infoWindow) {
-            infoWindow.close(); // Cierra el cuadro de información anterior
-          }
+
+          marker = createMarker(marker, pos)
 
           // Restablece las variables de la dirección
           streetNumber = "";
@@ -81,57 +136,9 @@ async function initMap() {
           province = "";
           country = "";
           postalCode = "";
-          
-          // Actualiza las variables lat y lng
-          lat = pos.lat;
-          lng = pos.lng;
 
-           // Aquí es donde necesitarías hacer la solicitud a la API de Geocoding
-          fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`)
-          .then(response => response.json())
-          .then(data => {
-          // Aquí es donde actualizarías las variables de dirección
-          // con la dirección obtenida de la API de Geocoding
-          let addressComponents = data.results[0].address_components;
-          addressComponents.forEach((component) => {
-            if (component.types.includes("street_number")) {
-              streetNumber = component.long_name;
-            }
-            if (component.types.includes("route")) {
-              streetName = component.long_name;
-            }
-            if (
-              component.types.includes("sublocality") ||
-              component.types.includes("neighborhood")
-            ) {
-              neighborhood = component.long_name;
-            }
-            if (component.types.includes("administrative_area_level_1")) {
-              province = component.long_name;
-            }
-            if (component.types.includes("country")) {
-              country = component.long_name;
-            }
-            if (component.types.includes("postal_code")) {
-              postalCode = component.long_name;
-            }
-            if (component.types.includes("locality")) {
-              city = component.long_name;
-            }
-          });
-          formattedAddress = data.results[0].formatted_address;
-
-          // Aquí es donde actualizarías el contenido de la ventana de información
-          let content = `<div id="infowindow-content">
-            <span id="place-displayname" class="title">${formattedAddress}</span><br />
-            <span id="place-address">${formattedAddress}</span>
-          </div>`;
-          infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
-            content: content,
-          });
-          infoWindow.open(map, marker);
-        })
-        .catch(error => console.error(error));
+          const formattedAddress = await fetchAddress(pos);
+          handleInfoWindow(formattedAddress)
         },
         () => {
           handleLocationError(true, infoWindow, map.getCenter());
@@ -142,6 +149,7 @@ async function initMap() {
       handleLocationError(false, infoWindow, map.getCenter());
     }
   });
+
 
    // Llama al evento click del botón de ubicación actual
    locationButton.click();
@@ -158,81 +166,27 @@ async function initMap() {
   }
 
   // Agrega un listener para el evento 'click' en el mapa
-map.addListener('click', function(event) {
-  placeMarker(event.latLng);
-});
+  map.addListener('click', async function(event) {
 
-// Función para colocar un marcador en la ubicación especificada
-function placeMarker(location) {
-  if (marker) {
-    marker.setMap(null); // Elimina el marcador anterior
-  }
-  marker = new google.maps.Marker({ // Crea un nuevo marcador
-    position: location,
-    map: map,
+    marker = createMarker(marker, event.latLng)
+
+    const pos = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng()
+    };
+
+    // Restablece las variables de la dirección
+    streetNumber = "";
+    streetName = "";
+    neighborhood = "";
+    city = "";
+    province = "";
+    country = "";
+    postalCode = "";
+
+    formattedAddress = await fetchAddress(pos);
+    handleInfoWindow(formattedAddress);
   });
-
-  // Actualiza las variables lat y lng
-  lat = location.lat();
-  lng = location.lng();
-
-   // Restablece las variables de la dirección
-   streetNumber = "";
-   streetName = "";
-   neighborhood = "";
-   city = "";
-   province = "";
-   country = "";
-   postalCode = "";
-
-  // Aquí es donde necesitarías hacer la solicitud a la API de Geocoding
-  fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`)
-  .then(response => response.json())
-  .then(data => {
-    // Aquí es donde actualizarías las variables de dirección
-    // con la dirección obtenida de la API de Geocoding
-    let addressComponents = data.results[0].address_components;
-    addressComponents.forEach((component) => {
-      if (component.types.includes("street_number")) {
-        streetNumber = component.long_name;
-      }
-      if (component.types.includes("route")) {
-        streetName = component.long_name;
-      }
-      if (
-        component.types.includes("sublocality") ||
-        component.types.includes("neighborhood")
-      ) {
-        neighborhood = component.long_name;
-      }
-      if (component.types.includes("administrative_area_level_1")) {
-        province = component.long_name;
-      }
-      if (component.types.includes("country")) {
-        country = component.long_name;
-      }
-      if (component.types.includes("postal_code")) {
-        postalCode = component.long_name;
-      }
-      if (component.types.includes("locality")) {
-        city = component.long_name;
-      }
-    });
-    formattedAddress = data.results[0].formatted_address;
-
-    // Aquí es donde actualizarías el contenido de la ventana de información
-    let content = `<div id="infowindow-content">
-      <span id="place-displayname" class="title">${formattedAddress}</span><br />
-      <span id="place-address">${formattedAddress}</span>
-    </div>`;
-    infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
-      content: content,
-    });
-    infoWindow.open(map, marker);
-  })
-  .catch(error => console.error(error));
-}
-
 
   // Add the gmp-placeselect listener, and display the results on the map.
   //@ts-ignore
@@ -245,9 +199,25 @@ function placeMarker(location) {
         "addressComponents",
       ],
     });
-    // If the place has a geometry, then present it on a map.
 
-    placeMarker(place.location);
+    marker = createMarker(marker, place.location)
+
+    const pos = {
+      lat: place.location.lat(),
+      lng: place.location.lng()
+    };
+
+    // Restablece las variables de la dirección
+    streetNumber = "";
+    streetName = "";
+    neighborhood = "";
+    city = "";
+    province = "";
+    country = "";
+    postalCode = "";
+
+    formattedAddress = await fetchAddress(pos);
+    handleInfoWindow(formattedAddress);
 
     if (place.viewport) {
       map.fitBounds(place.viewport);
@@ -256,47 +226,7 @@ function placeMarker(location) {
       map.setZoom(17);
     }
 
-    lat = place.location.lat();
-    lng = place.location.lng();
-
-    let addressComponents = place.addressComponents;
-
-    console.log(addressComponents);
-
-    addressComponents.forEach((component) => {
-      if (component.types.includes("street_number")) {
-        streetNumber = component.longText;
-      }
-      if (component.types.includes("route")) {
-        streetName = component.longText;
-      }
-      if (
-        component.types.includes("sublocality") ||
-        component.types.includes("neighborhood")
-      ) {
-        neighborhood = component.longText;
-      }
-      if (component.types.includes("administrative_area_level_1")) {
-        province = component.longText;
-      }
-      if (component.types.includes("country")) {
-        country = component.longText;
-      }
-      if (component.types.includes("postal_code")) {
-        postalCode = component.longText;
-      }
-      if (component.types.includes("locality")) {
-        city = component.longText;
-      }
-    });
-
-    let content = `<div id="infowindow-content">
-        <span id="place-displayname" class="title">${place.displayName}</span><br />
-        <span id="place-address">${place.formattedAddress}</span>
-    </div>`;
-    lat = place.location.lat();
-    lng = place.location.lng();
-    formattedAddress = place.formattedAddress;
+    
 
     console.log(`Formatted Address: ${place.formattedAddress}`);
     console.log(`Latitude: ${lat}`);
@@ -309,8 +239,7 @@ function placeMarker(location) {
     console.log(`City: ${city}`);
     console.log(`Postal Code: ${postalCode}`);
 
-    updateInfoWindow(content, place.location);
-    marker.position = place.location;
+  
   });
 }
 
