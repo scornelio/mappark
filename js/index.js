@@ -46,6 +46,7 @@ async function initMap() {
   });
   infoWindow = new google.maps.InfoWindow({});
 
+
   function createMarker(marker, position){
     if (marker) {
       marker.setMap(null); // Elimina el marcador anterior
@@ -100,10 +101,7 @@ async function initMap() {
       infoWindow.close(); // Cierra el cuadro de información anterior
     }
     // Aquí es donde actualizarías el contenido de la ventana de información
-    let content = `<div id="infowindow-content">
-    <span id="place-displayname" class="title">${formattedAddress}</span><br />
-    <span id="place-address">${formattedAddress}</span>
-    </div>`;
+    let content = `<span id="place-displayname" class="title">${formattedAddress}</span>`;
     infoWindow = new google.maps.InfoWindow({ // Crea un nuevo cuadro de información
       content: content,
     });
