@@ -49,7 +49,7 @@ async function initMap() {
   infoWindow = new google.maps.InfoWindow({});
 
 
-  function createMarker(marker, position){
+  function createMarker(marker, position) {
     if (marker) {
       marker.setMap(null); // Elimina el marcador anterior
     }
@@ -64,7 +64,7 @@ async function initMap() {
 
   async function fetchAddress(position) {
     try {
-      let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.lat},${position.lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`);
+      let response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyD1PJSnTpauRdZYlOx8TJ_XaP2lUrpkEn8`);
       let data = await response.json();
 
       // Restablece las variables de la dirección
@@ -108,9 +108,9 @@ async function initMap() {
       console.error(error);
     }
   };
-  
 
-  function handleInfoWindow(formattedAddress, marker){
+
+  function handleInfoWindow(formattedAddress, marker) {
     if (infoWindow) {
       infoWindow.close(); // Cierra el cuadro de información anterior
     }
@@ -123,11 +123,11 @@ async function initMap() {
   }
 
   async function updateMarkerAndInfoWindow(marker, pos) {
-    geolocationError=false
+    geolocationError = false
     marker = createMarker(marker, pos);
     const formattedAddress = await fetchAddress(pos);
     handleInfoWindow(formattedAddress, marker);
-    
+
     return marker
   }
 
@@ -145,8 +145,8 @@ async function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          lat= position.coords.latitude
-          lng= position.coords.longitude
+          lat = pos.lat;
+          lng = pos.lng;
           map.setCenter(pos);
           map.setZoom(17);
 
@@ -165,7 +165,7 @@ async function initMap() {
 
   if (navigator.permissions) {
     // Comprueba el estado del permiso de geolocalización
-    navigator.permissions.query({name:'geolocation'}).then(function(result) {
+    navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
       if (result.state == 'granted') {
         // El permiso de geolocalización está activado, llama a locationButton.click()
         locationButton.click();
@@ -188,14 +188,14 @@ async function initMap() {
   }
 
   // Agrega un listener para el evento 'click' en el mapa
-  map.addListener('click', async function(event) {
+  map.addListener('click', async function (event) {
     document.getElementById('spinner').style.display = 'none';
     const pos = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
     };
-    lat = event.latLng.lat()
-    lng = event.latLng.lng()
+    lat = pos.lat;
+    lng = pos.lng;
     marker = await updateMarkerAndInfoWindow(marker, pos);
   });
 
@@ -216,9 +216,9 @@ async function initMap() {
       lat: place.location.lat(),
       lng: place.location.lng()
     };
-    lat = place.location.lat()
-    lng = place.location.lng()
-    console.log(lat +" "+lng);
+    lat = pos.lat;
+    lng = pos.lng;
+
     marker = await updateMarkerAndInfoWindow(marker, pos);
 
     if (place.viewport) {
@@ -257,11 +257,23 @@ initMap();
 const hoy = new Date(Date.now());
 
 const fecha = hoy.toISOString();
-const hora = hoy.getHours() + ":" + hoy.getMinutes() + ":" + hoy.getSeconds();
+//const hora = hoy.getHours() + ":" + hoy.getMinutes() + ":" + hoy.getSeconds();
+let horaInicio = 0;
+let horaFin = 0;
+const hora = hoy.getHours();
+
+if (hora < 20 && hora >= 8) {
+  horaInicio = 8;
+  horaFin = 20;
+}
+else {
+  horaInicio = 20;
+  horaFin = 8;
+}
 // Get Moth Name
 const month = hoy.toLocaleString("default", { month: "long" });
 // Get Day Name
-const day = hoy.toLocaleString("default", { weekday: "long" });
+const day = hoy.toLocaleString("default", { weekday: "long" }).charAt(0).toUpperCase() + hoy.toLocaleString("default", { weekday: "long" }).slice(1);
 // Get Year today
 const year = hoy.getFullYear();
 console.log(day + " " + month + " " + year);
@@ -294,7 +306,7 @@ checkButton.addEventListener("click", function () {
   let temp = 0;
   let prec = 0;
 
-  
+
 
   const requestOptionsWeather = {
     method: "GET",
@@ -310,30 +322,31 @@ checkButton.addEventListener("click", function () {
       console.log(temp);
       prec = result.rain ? result.rain["1h"] : 0;
       console.log(prec);
+
     })
     .catch((error) => console.error(error));
 
-    console.log("Codigo postal: "+postalCode);
+  console.log("Codigo postal: " + postalCode);
 
   const raw = JSON.stringify({
     // idProbabilidadEstacionamiento: 0,
     latitud: lat,
     longitud: lng,
-    pais: country,
+    //pais: country,
     ciudad: city,
     provincia: province,
-    barrio: neighborhood,
-    nombrevia: streetName + " " + streetNumber,
+    //barrio: neighborhood,
+    //nombrevia: streetName + " " + streetNumber,
     codigoPostal: postalCode,
-    fecha: fecha,
-    ano: year,
-    dia: 0,
+    //fecha: fecha,
+    //ano: year,
+    //dia: 0,
     nombreDiaSemana: day,
-    nombreMes: month,
-    HoraInicio: hora,
-    HoraFin: hora,
-    precipitacion: 1,
-    temperatura: 1,
+    //nombreMes: month,
+    HoraInicio: horaInicio,
+    HoraFin: horaFin,
+    precipitacion: prec,
+    temperatura: temp,
     Densidad: 0,
   });
 
@@ -345,7 +358,9 @@ checkButton.addEventListener("click", function () {
   };
 
 
-  
+
+
+
 
   const url = "https://api-mappark.azurewebsites.net/api/machinelearning/ProbabilidadEstacionamiento";
   //const url = "http://localhost:9798/api/machinelearning/ProbabilidadEstacionamiento";
@@ -361,20 +376,20 @@ checkButton.addEventListener("click", function () {
       // Ocultar el spinner
       document.getElementById('spinner').style.display = 'none';
 
-      if (result == 'alta'|| result =='media' || result =='baja') {
+      if (result == 'alta' || result == 'media' || result == 'baja') {
 
         let address = '';
         if (streetName) {
-            address += streetName;
+          address += streetName;
         }
         if (streetNumber) {
-            address += (address ? ', ' : '') + streetNumber;
+          address += (address ? ', ' : '') + streetNumber;
         }
         if (postalCode) {
-            address += (address ? ', ' : '') + postalCode;
+          address += (address ? ', ' : '') + postalCode;
         }
         if (city) {
-            address += (address ? ', ' : '') + city;
+          address += (address ? ', ' : '') + city;
         }
 
         let color = result == 'alta' ? 'success' : result == 'media' ? 'warning' : 'danger';
