@@ -309,8 +309,8 @@ checkButton.addEventListener("click", function () {
 
   const raw = JSON.stringify({
     // idProbabilidadEstacionamiento: 0,
-    // latitud: lat,
-    // longitud: lng,
+    latitud: lat,
+    longitud: lng,
     pais: country,
     ciudad: city,
     provincia: province,
@@ -324,8 +324,8 @@ checkButton.addEventListener("click", function () {
     nombreMes: month,
     HoraInicio: hora,
     HoraFin: hora,
-    // temperatura: temp,
-    // precipitacion: prec,
+    precipitacion: prec,
+    temperatura: temp,
     Densidad: 0,
   });
 
