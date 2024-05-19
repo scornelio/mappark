@@ -57,6 +57,8 @@ async function initMap() {
       position: position,
       map: map,
     });
+    lat = position.lat;
+    lng = position.lng;
     return marker;
   }
 
@@ -143,6 +145,8 @@ async function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
+          lat= position.coords.latitude
+          lng= position.coords.longitude
           map.setCenter(pos);
           map.setZoom(17);
 
@@ -190,6 +194,8 @@ async function initMap() {
       lat: event.latLng.lat(),
       lng: event.latLng.lng()
     };
+    lat = event.latLng.lat()
+    lng = event.latLng.lng()
     marker = await updateMarkerAndInfoWindow(marker, pos);
   });
 
@@ -210,7 +216,9 @@ async function initMap() {
       lat: place.location.lat(),
       lng: place.location.lng()
     };
-    
+    lat = place.location.lat()
+    lng = place.location.lng()
+    console.log(lat +" "+lng);
     marker = await updateMarkerAndInfoWindow(marker, pos);
 
     if (place.viewport) {
@@ -324,8 +332,8 @@ checkButton.addEventListener("click", function () {
     nombreMes: month,
     HoraInicio: hora,
     HoraFin: hora,
-    precipitacion: prec,
-    temperatura: temp,
+    precipitacion: 1,
+    temperatura: 1,
     Densidad: 0,
   });
 
@@ -353,7 +361,7 @@ checkButton.addEventListener("click", function () {
       // Ocultar el spinner
       document.getElementById('spinner').style.display = 'none';
 
-      if (result == 'Alta'|| result =='Media' || result =='Baja') {
+      if (result == 'alta'|| result =='media' || result =='baja') {
 
         let address = '';
         if (streetName) {
@@ -369,7 +377,7 @@ checkButton.addEventListener("click", function () {
             address += (address ? ', ' : '') + city;
         }
 
-        let color = result == 'Alta' ? 'success' : result == 'Media' ? 'warning' : 'danger';
+        let color = result == 'alta' ? 'success' : result == 'media' ? 'warning' : 'danger';
         insertText.innerHTML = `<div class="card">
         <div class="card-body">
         <h5 class="card-title p-2">Probabilidad <b class="text-${color}">${result}</b></h5>
